@@ -84,9 +84,8 @@ public:
 	friend gvec<T, N> operator*(const T& other, gvec<T, N> self);
 	template <typename T, size_t N>
 	friend gvec<T, N> operator/(gvec<T, N> self, const T& other);
-	//    Makes no sense:
-	// template <typename T, size_t N>
-	// friend gvec<T, N> operator/(const T& other, gvec<T, N> self);
+	template <typename T, size_t N>
+	friend gvec<T, N> operator/(const T& other, gvec<T, N> self);
 
 	template <typename T, size_t N>
 	friend bool operator==(const gvec<T, N>& left, const gvec<T, N>& right);
@@ -115,10 +114,10 @@ public:
 	gvec<C, N> cast() const;
 
 	template <typename C, typename = std::enable_if_t<std::is_convertible<T, C>::value>>
-	operator gvec<C, N>() const;
+	explicit operator gvec<C, N>() const;
 };
 
-template <typename O, typename... T>
-gvec<O, sizeof...(T)> make_vec(T... vals);
+template <typename C, typename... Args>
+gvec<C, sizeof...(T)> make_vec(Args&&... vals);
 
 #include "gvec.tpp"

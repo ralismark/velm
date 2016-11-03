@@ -5,8 +5,8 @@
 template <typename T, size_t N>
 gvec<T, N>::gvec(T init)
 {
-	for(size_t i = 0; i < N; ++i) {
-		vals[i] = init;
+	for(auto&& it : vals) {
+		it = init;
 	}
 }
 
@@ -26,8 +26,8 @@ template <typename T, size_t N>
 gvec<T, N> gvec<T, N>::operator-() const
 {
 	auto copy = *this;
-	for(size_t i = 0; i < N; ++i) {
-		copy.vals[i] = -copy.vals[i];
+	for(auto&& it : copy.vals) {
+		it = -it;
 	}
 	return copy;
 }
@@ -96,7 +96,7 @@ template <typename T, size_t N>
 gvec<T, N>& gvec<T, N>::operator*=(const T& other)
 {
 	for(size_t i = 0; i < N; ++i) {
-		vals[i] *= other;
+		vals[i] *= other.vals[i];
 	}
 	return *this;
 }
@@ -105,7 +105,7 @@ template <typename T, size_t N>
 gvec<T, N>& gvec<T, N>::operator/=(const T& other)
 {
 	for(size_t i = 0; i < N; ++i) {
-		vals[i] /= other;
+		vals[i] /= other.vals[i];
 	}
 	return *this;
 }
@@ -117,15 +117,24 @@ gvec<T, N> operator*(gvec<T, N> self, const T& other)
 }
 
 template <typename T, size_t N>
+gvec<T, N> operator*(const T& other, gvec<T, N> self)
+{
+	return self *= other;
+}
+
+template <typename T, size_t N>
 gvec<T, N> operator/(gvec<T, N> self, const T& other)
 {
 	return self /= other;
 }
 
 template <typename T, size_t N>
-gvec<T, N> operator*(const T& other, gvec<T, N> self)
+gvec<T, N> operator/(const T& other, gvec<T, N> self)
 {
-	return self *= other;
+	for(auto&& it : self.vals) {
+		it = other / it;
+	}
+	return self;
 }
 
 template <typename T, size_t N>
@@ -202,11 +211,9 @@ template <typename T, size_t N>
 std::ostream& operator<<(std::ostream& os, const gvec<T, N>& gv)
 {
 	os << "[ ";
-	for(size_t i = 0; i < N; ++i) {
-		if(i != 0) {
-			os << ", ";
-		}
-		os << gv[i];
+	bool first = true;
+	for(auto it : gv.vals) {
+		os << (first ? "" : ", ") << it;
 	}
 	os << " ]";
 	return os;
@@ -218,7 +225,7 @@ gvec<C, N> gvec<T, N>::cast() const
 {
 	gvec<C, N> out;
 	for(size_t i = 0; i < N; ++i) {
-		out[i] = vals[i];
+		out[i] = static_cast<C>(vals[i]);
 	}
 	return out;
 }
@@ -230,9 +237,8 @@ gvec<T, N>::operator gvec<C, N>() const
 	return this->cast<C>();
 }
 
-template <typename O, typename... Args>
-gvec<O, sizeof...(Args)> make_vec(Args&&... vals)
+template <typename C, typename... Args>
+gvec<C, sizeof...(Args)> make_vec(Args&&... vals)
 {
-	gvec<O, sizeof...(T)> gv = {vals...};
-	return gv;
+	return gvec<C, sizeof...(T)>(vals...);
 }
