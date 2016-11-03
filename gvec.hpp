@@ -3,18 +3,10 @@
 #include <ostream>
 #include <type_traits>
 
-namespace detail
-{
-
-	// Template Metaprogramming Mess
-	// Though not as bad as utils.hpp
-
-}
-
 template <typename T, size_t N>
 class gvec // Generic vector
 {
-public:
+private: // for operator -> members and static checking
 	template <typename T, size_t N>
 	struct accessor
 	{
@@ -57,6 +49,8 @@ private:
 	};
 public:
 	gvec(T init = T());
+	// requires over 1 to stop overriding important functions
+	// e.g. copy ctor
 	template <typename... Args, typename = std::enable_if_t<(sizeof...(Args) > 1)>>
 	gvec(Args&&... args);
 
