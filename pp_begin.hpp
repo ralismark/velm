@@ -99,6 +99,16 @@ const T& operator[](size_t n) const
 	return vals[n];
 }
 
+template <typename C>
+gvec<C, N> cast() const
+{
+	gvec<C, N> out;
+	for(size_t i = 0; i < N; ++i) {
+		out[i] = static_cast<C>(vals[i]);
+	}
+	return out;
+}
+
  * However, that's quite long, so it's been contracted into 4 lines.
  */
 
@@ -107,5 +117,6 @@ const T& operator[](size_t n) const
 	gvec(T init = T()) { for(auto&& it : vals) it = init; } \
 	template <typename... Args, typename = std::enable_if_t<(sizeof...(Args) > 1)>> gvec(Args&&... args) : vals{args...} { ; } \
 	T& operator[](size_t n) { return vals[n]; } \
-	const T& operator[](size_t n) const { return vals[n]; }
+	const T& operator[](size_t n) const { return vals[n]; } \
+	template <typename C> gvec<C, N> cast() const { gvec<C, N> out; for(size_t i = 0; i < N; ++i) out[i] = static_cast<C>(vals[i]); return out; }
 
