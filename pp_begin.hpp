@@ -35,16 +35,7 @@
  * warnings, we need special definitions for each compiler. However, the
  * generally do the same thing (though with different wording)
  */
-#if defined(_MSC_VER)
-
-#	define _warn_protect_begin_ \
-		_Pragma("warning(push)") \
-		_Pragma("warning(disable: 4201)")
-
-#	define _warn_protect_end_ \
-		_Pragma("warning(pop)")
-
-#elif defined(__clang__)
+#if defined(__clang__)
 
 #	define _warn_protect_begin_ \
 		_Pragma("clang diagnostic push") \
@@ -61,6 +52,15 @@
 
 #	define _warn_protect_end_ \
 		_Pragma("GCC diagnostic pop")
+
+#elif defined(_MSC_VER)
+
+#	define _warn_protect_begin_ \
+		_Pragma("warning(push)") \
+		_Pragma("warning(disable: 4201)")
+
+#	define _warn_protect_end_ \
+		_Pragma("warning(pop)")
 
 #else // unknown or non-conventional compiler, keep warnings
 
@@ -113,7 +113,7 @@ gvec<C, N> cast() const
  */
 
 
-#define _vec_base_ops_ \
+#define _vec_base_ops_(N) \
 	gvec(T init = T()) { for(auto&& it : vals) it = init; } \
 	template <typename... Args, typename = std::enable_if_t<(sizeof...(Args) > 1)>> gvec(Args&&... args) : vals{args...} { ; } \
 	T& operator[](size_t n) { return vals[n]; } \

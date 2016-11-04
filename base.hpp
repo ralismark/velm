@@ -1,6 +1,8 @@
+#pragma once
+
 #include <type_traits>
 
-#include "pp_guard_begin.hpp"
+#include "pp_begin.hpp"
 
 /*
  * Base union definitions and declarations
@@ -27,7 +29,7 @@ _warn_protect_begin_
 	};
 _warn_protect_end_
 
-_vec_base_ops_
+_vec_base_ops_(N)
 };
 
 // this blank union has basically no use,
@@ -51,7 +53,7 @@ _warn_protect_begin_
 	};
 _warn_protect_end_
 
-_vec_base_ops_
+_vec_base_ops_(1)
 };
 
 template <typename T>
@@ -65,7 +67,7 @@ _warn_protect_begin_
 	};
 _warn_protect_end_
 
-_vec_base_ops_
+_vec_base_ops_(2)
 };
 
 template <typename T>
@@ -79,7 +81,7 @@ _warn_protect_begin_
 	};
 _warn_protect_end_
 
-_vec_base_ops_
+_vec_base_ops_(3)
 };
 
-#include "pp_guard_begin.hpp"
+#include "pp_begin.hpp"
