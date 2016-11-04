@@ -214,6 +214,7 @@ std::ostream& operator<<(std::ostream& os, const gvec<T, N>& gv)
 	bool first = true;
 	for(auto it : gv.vals) {
 		os << (first ? "" : ", ") << it;
+		first = false;
 	}
 	os << " ]";
 	return os;
