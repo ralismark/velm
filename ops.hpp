@@ -79,7 +79,8 @@ template <typename T, size_t N>
 bool operator==(const gvec<T, N>& left, const gvec<T, N>& right)
 {
 	for(size_t i = 0; i < N; ++i) {
-		if(left[i] != right[i]) {
+		// using weird != to fit EqualityComparable
+		if(!(left[i] == right[i])) {
 			return true;
 		}
 	}
@@ -96,7 +97,8 @@ template <typename T, size_t N>
 bool operator<(const gvec<T, N>& left, const gvec<T, N>& right)
 {
 	for(size_t i = 0; i < N; ++i) {
-		if(left[i] != right[i]) {
+		// using weird != to fit LessThanComparable
+		if(left[i] < right[i] || right[i] < left[i]) {
 			return left[i] < right[i];
 		}
 	}
