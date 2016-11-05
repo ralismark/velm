@@ -1,5 +1,15 @@
 #pragma once
 
+#include "base.hpp"
+
+/*
+ * Vector operators
+ *
+ * The operators for vectors are defined in this file. To avoid a further
+ * template specialisation mess, all of them are defined as non-member
+ * functions, relying on the subscript operator for access.
+ */
+
 template <typename T, size_t N>
 gvec<T, N> operator+(const gvec<T, N>& self)
 {
