@@ -20,6 +20,8 @@
 
 template <typename T, size_t N>
 union gvec {
+	// do not support N == 0
+	static_assert(N > 0, "vector must have at least 1 dimension");
 private:
 	T vals[N];
 public:
@@ -30,16 +32,6 @@ _warn_protect_begin_
 _warn_protect_end_
 
 _vec_base_ops_(N)
-};
-
-// this blank union has basically no use,
-// other than to make gvec<T, 0> be valid
-template <typename T>
-union gvec<T, 0> {
-	gvec(T init = T()) { ; }
-	template <typename... Args,
-		 typename = std::enable_if<(sizeof...(Args) > 1)>>
-	gvec(Args&&... args) { ; }
 };
 
 template <typename T>
