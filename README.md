@@ -5,6 +5,26 @@ A header-only generic n-dimensional (math) vector.
 Similar to `std::valarray`, it allows you to store an array of values of a
 specified type, and perform operations with them.
 
+## Install
+
+This library is header-only. However, the source is spread across several files.
+Processing will need to be done to install if a single header is wanted.
+
+### Single Header
+
+This is simply being a manual preprocessor.
+
+Concatenate `ops.hpp` to `base.hpp`, and replace `#include "pp_begin.hpp"` and
+`#include "pp_end.hpp"` with the contents of the files. Then remove all include
+directives of local files and copies of `#pragma once`.
+
+### Multiple Header
+
+Put the header files in your include directory.
+
+I recommend that you either put the files together in a directory, or rename
+them to something more unique.
+
 ## API Reference
 
 The generic vector is named `gvec` and has two template arguments:
