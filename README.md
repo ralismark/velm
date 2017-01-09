@@ -51,7 +51,7 @@ conventions or are explained later.
      applicable if there are more than 1 argument. Requires `T` to be
      convertible from each of the used types.
 
- - `gvec<C, N> gvec::cast<C>() const`
+ - `explicit operator gvec<C, N>() const`
 
      Creates a new vector with type `C` instead of `T`. A vector is default
      initialised, and each dimension is statically cast to `C`. Requires `T` to

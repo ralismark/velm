@@ -108,7 +108,7 @@ const T& operator[](size_t n) const
 }
 
 template <typename C>
-gvec<C, N> cast() const
+explicit operator gvec<C, N>() const
 {
 	gvec<C, N> out;
 	for(size_t i = 0; i < N; ++i) {
@@ -126,7 +126,7 @@ gvec<C, N> cast() const
 	template <typename... Args, typename = std::enable_if_t<(sizeof...(Args) > 1)>> gvec(Args&&... args) : vals{args...} { ; } \
 	T& operator[](size_t n) { return vals[n]; } \
 	const T& operator[](size_t n) const { return vals[n]; } \
-	template <typename C> gvec<C, N> cast() const { gvec<C, N> out; for(size_t i = 0; i < N; ++i) out[i] = static_cast<C>(vals[i]); return out; }
+	template <typename C> explicit operator gvec<C, N>() const { gvec<C, N> out; for(size_t i = 0; i < N; ++i) out[i] = static_cast<C>(vals[i]); return out; }
 
 // --- end: pp_begin.hpp ---
 
