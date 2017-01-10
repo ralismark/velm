@@ -11,12 +11,14 @@
  */
 
 template <typename T, size_t N>
+constexpr
 gvec<T, N> operator+(const gvec<T, N>& self)
 {
 	return self;
 }
 
 template <typename T, size_t N>
+constexpr
 gvec<T, N> operator-(gvec<T, N> cpy)
 {
 	for(size_t i = 0; i < N; ++i) {
@@ -26,6 +28,7 @@ gvec<T, N> operator-(gvec<T, N> cpy)
 }
 
 template <typename T, size_t N>
+constexpr
 gvec<T, N>& operator+=(gvec<T, N>& self, const gvec<T, N>& other)
 {
 	for(size_t i = 0; i < N; ++i) {
@@ -35,6 +38,7 @@ gvec<T, N>& operator+=(gvec<T, N>& self, const gvec<T, N>& other)
 }
 
 template <typename T, size_t N>
+constexpr
 gvec<T, N>& operator-=(gvec<T, N>& self, const gvec<T, N>& other)
 {
 	for(size_t i = 0; i < N; ++i) {
@@ -44,6 +48,7 @@ gvec<T, N>& operator-=(gvec<T, N>& self, const gvec<T, N>& other)
 }
 
 template <typename T, size_t N>
+constexpr
 gvec<T, N>& operator*=(gvec<T, N>& self, const gvec<T, N>& other)
 {
 	for(size_t i = 0; i < N; ++i) {
@@ -53,6 +58,7 @@ gvec<T, N>& operator*=(gvec<T, N>& self, const gvec<T, N>& other)
 }
 
 template <typename T, size_t N>
+constexpr
 gvec<T, N>& operator/=(gvec<T, N>& self, const gvec<T, N>& other)
 {
 	for(size_t i = 0; i < N; ++i) {
@@ -62,30 +68,35 @@ gvec<T, N>& operator/=(gvec<T, N>& self, const gvec<T, N>& other)
 }
 
 template <typename T, size_t N>
+constexpr
 gvec<T, N> operator+(gvec<T, N> left, const gvec<T, N>& right)
 {
 	return left += right;
 }
 
 template <typename T, size_t N>
+constexpr
 gvec<T, N> operator-(gvec<T, N> left, const gvec<T, N>& right)
 {
 	return left -= right;
 }
 
 template <typename T, size_t N>
+constexpr
 gvec<T, N> operator*(gvec<T, N> left, const gvec<T, N>& right)
 {
 	return left *= right;
 }
 
 template <typename T, size_t N>
+constexpr
 gvec<T, N> operator/(gvec<T, N> left, const gvec<T, N>& right)
 {
 	return left /= right;
 }
 
 template <typename T, size_t N>
+constexpr
 bool operator==(const gvec<T, N>& left, const gvec<T, N>& right)
 {
 	for(size_t i = 0; i < N; ++i) {
@@ -98,12 +109,14 @@ bool operator==(const gvec<T, N>& left, const gvec<T, N>& right)
 }
 
 template <typename T, size_t N>
+constexpr
 bool operator!=(const gvec<T, N>& left, const gvec<T, N>& right)
 {
 	return !(left == right);
 }
 
 template <typename T, size_t N>
+constexpr
 bool operator<(const gvec<T, N>& left, const gvec<T, N>& right)
 {
 	for(size_t i = 0; i < N; ++i) {
@@ -116,18 +129,21 @@ bool operator<(const gvec<T, N>& left, const gvec<T, N>& right)
 }
 
 template <typename T, size_t N>
+constexpr
 bool operator>(const gvec<T, N>& left, const gvec<T, N>& right)
 {
 	return right < left;
 }
 
 template <typename T, size_t N>
+constexpr
 bool operator<=(const gvec<T, N>& left, const gvec<T, N>& right)
 {
 	return !(left > right);
 }
 
 template <typename T, size_t N>
+constexpr
 bool operator>=(const gvec<T, N>& left, const gvec<T, N>& right)
 {
 	return !(left < right);

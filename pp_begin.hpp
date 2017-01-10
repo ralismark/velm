@@ -77,6 +77,7 @@
  *
  * Expanded, it looks like this:
 
+constexpr
 gvec(T init = T())
 {
 	for(auto&& it : vals) {
@@ -85,21 +86,25 @@ gvec(T init = T())
 }
 
 template <typename... Args, typename = std::enable_if<(sizeof...(Args) > 1)>>
+constexpr
 gvec(Args&&... args)
 	: vals{args...}
 { ; }
 
+constexpr
 T& operator[](size_t n)
 {
 	return vals[n];
 }
 
+constexpr
 const T& operator[](size_t n) const
 {
 	return vals[n];
 }
 
 template <typename C>
+constexpr
 explicit operator gvec<C, N>() const
 {
 	gvec<C, N> out;
@@ -109,14 +114,14 @@ explicit operator gvec<C, N>() const
 	return out;
 }
 
- * However, that's quite long, so it's been contracted into 4 lines.
+ * However, that's quite long, so it's been contracted
  */
 
 
 #define _vec_base_ops_(N) \
-	gvec(T init = T()) { for(auto&& it : vals) it = init; } \
-	template <typename... Args, typename = std::enable_if_t<(sizeof...(Args) > 1)>> gvec(Args&&... args) : vals{args...} { ; } \
-	T& operator[](size_t n) { return vals[n]; } \
-	const T& operator[](size_t n) const { return vals[n]; } \
-	template <typename C> explicit operator gvec<C, N>() const { gvec<C, N> out; for(size_t i = 0; i < N; ++i) out[i] = static_cast<C>(vals[i]); return out; }
+	constexpr gvec(T init = T()) { for(auto&& it : vals) it = init; } \
+	template <typename... Args, typename = std::enable_if_t<(sizeof...(Args) > 1)>> constexpr gvec(Args&&... args) : vals{args...} { ; } \
+	constexpr T& operator[](size_t n) { return vals[n]; } \
+	constexpr const T& operator[](size_t n) const { return vals[n]; } \
+	template <typename C> constexpr explicit operator gvec<C, N>() const { gvec<C, N> out; for(size_t i = 0; i < N; ++i) out[i] = static_cast<C>(vals[i]); return out; }
 
