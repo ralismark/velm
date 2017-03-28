@@ -1,0 +1,180 @@
+#pragma once
+
+#include "defs.hpp"
+#include "base.hpp"
+#include "utility.hpp"
+#include "proxy.hpp"
+
+namespace velm {
+
+template <typename T, unsigned int N>
+struct vector
+	: private tied_vector
+	, public vec_base<T, N, swizzle_proxy>
+{
+private: // internal statics
+
+	template <typename Tup, std::size_t... Is>
+	constexpr static vector<T, N> from_tuple_impl(Tup&& t, std::index_sequence<Is...> /* seq */)
+	{
+		return vector<T, N>(std::get<Is>(t)...);
+	}
+
+public: // statics
+
+	static constexpr auto dimensions = N;
+	using value_type = T;
+
+	template <typename Tup>
+	constexpr static vector<T, N> from_tuple(Tup&& t)
+	{
+		using tup_size = std::tuple_size<std::decay_t<Tup>>;
+		return from_tuple_impl(std::forward<Tup>(t), std::make_index_sequence<tup_size::value>());
+	}
+
+private: // internal methods
+
+	using base_type = vec_base<T, N, swizzle_proxy>;
+
+	constexpr base_type& as_base()
+	{
+		return static_cast<base_type&>(*this);
+	}
+
+	constexpr const base_type& as_base() const
+	{
+		return static_cast<base_type&>(*this);
+	}
+
+	template <std::size_t... Is>
+	constexpr auto tie_impl(std::index_sequence<Is...> /* seq */)
+	{
+		return std::tie(std::get<Is>(this->as_base().data)...);
+	}
+
+	template <std::size_t... Is>
+	constexpr auto tie_impl(std::index_sequence<Is...> /* seq */) const
+	{
+		return std::tie(std::get<Is>(this->as_base().data)...);
+	}
+
+	template <std::size_t... Is>
+	constexpr auto tie_impl_r(std::index_sequence<Is...> /* seq */) const
+	{
+		return std::make_tuple(std::get<Is>(this->as_base().data)...);
+	}
+
+public: // methods
+
+	constexpr vector()
+		: tied_vector()
+		, base_type()
+	{
+	}
+
+	// value constructors
+	template <typename U,
+	         std::enable_if_t<(!is_tied_vector<std::decay_t<U>>::value
+	                           && std::is_convertible<const U&, T>::value), int> = 0>
+	constexpr vector(const U& val)
+		: vector(from_tuple(make_filled_tuple<N>(val)))
+	{
+	}
+
+	template <typename U,
+	         std::enable_if_t<(!is_tied_vector<std::decay_t<U>>::value
+	                           && !std::is_convertible<const U&, T>::value), int> = 0,
+	         typename = void> // dummy
+	constexpr explicit vector(const U& val)
+		: vector(from_tuple(make_filled_tuple<N>(val)))
+	{
+	}
+
+	// vector converters
+	template <typename V,
+		std::enable_if_t<(is_tied_vector<std::decay_t<V>>::value
+		                  && std::is_convertible<typename std::decay_t<V>::value_type, T>::value), int> = 0>
+	constexpr vector(const V& vec)
+		: vector(from_tuple(vec.tie()))
+	{
+	}
+
+	template <typename V,
+		std::enable_if_t<(is_tied_vector<std::decay_t<V>>::value
+		                  && !std::is_convertible<typename std::decay_t<V>::value_type, T>::value), int> = 0,
+		typename = void> // dummy
+	constexpr explicit vector(const V& vec)
+		: vector(from_tuple(vec.tie()))
+	{
+	}
+
+	// dimension constructors
+	template <typename... Ts,
+		typename = std::enable_if_t<(sizeof...(Ts) == N && N > 1
+		                             && conjunction<std::is_convertible<Ts, T>::value...>::value)>>
+	constexpr vector(Ts&&... vals)
+		: tied_vector()
+		, base_type{{{{static_cast<T>(std::forward<Ts>(vals))...}}}}
+	{
+	}
+
+	template <typename... Ts,
+		typename = std::enable_if_t<(sizeof...(Ts) == N && N > 1
+		                             && !conjunction<std::is_convertible<Ts, T>::value...>::value)>,
+		typename = void> // dummy
+	constexpr explicit vector(Ts&&... vals)
+		: tied_vector()
+		, base_type{{{{static_cast<T>(std::forward<Ts>(vals))...}}}}
+	{
+	}
+
+
+	template <unsigned int... Is>
+	swizzle_proxy<T, Is...>& swizzle() &
+	{
+		static_assert(tmax<unsigned int, Is...>::value < N, "Indices must be valid");
+		return *reinterpret_cast<swizzle_proxy<T, Is...>*>(&this->as_base().data);
+	}
+
+	template <unsigned int... Is>
+	const swizzle_proxy<T, Is...>& swizzle() const&
+	{
+		static_assert(tmax<unsigned int, Is...>::value < N, "Indices must be valid");
+		return *reinterpret_cast<const swizzle_proxy<T, Is...>*>(&this->as_base().data);
+	}
+
+	template <unsigned int... Is>
+	vector<T, sizeof...(Is)> swizzle() const&&
+	{
+		static_assert(tmax<unsigned int, Is...>::value < N, "Indices must be valid");
+		return vector<T, sizeof...(Is)>(std::get<Is>(this->as_base().data)...);
+	}
+
+	constexpr auto tie() &
+	{
+		return this->tie_impl(std::make_index_sequence<N>());
+	}
+
+	constexpr auto tie() const&
+	{
+		return this->tie_impl(std::make_index_sequence<N>());
+	}
+
+	constexpr auto tie() const&&
+	{
+		return this->tie_impl_r(std::make_index_sequence<N>());
+	}
+
+	constexpr T& operator[](std::size_t idx)
+	{
+		return this->as_base().data[idx];
+	}
+
+	constexpr const T& operator[](std::size_t idx) const
+	{
+		return this->as_base().data[idx];
+	}
+
+};
+
+} // namespace velm
