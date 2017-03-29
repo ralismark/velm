@@ -28,19 +28,6 @@ struct tmax<T, l, r, vals...>
 };
 
 /**
- * \struct conjunction
- * \brief logical and of template parameters
- *
- * This is a replacement for fold expressions (which are not supported in
- * MSVC). That's all.
- */
-template <bool... Bs>
-struct conjunction
-	: std::integral_constant<bool, tmax<bool, !true, !Bs...>::value>
-{
-};
-
-/**
  * \struct tied_vector
  * \brief tag for vector-likes
  *

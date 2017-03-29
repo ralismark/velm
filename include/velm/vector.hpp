@@ -74,55 +74,24 @@ public: // methods
 
 	// value constructors
 	template <typename U,
-	         std::enable_if_t<(!is_tied_vector<std::decay_t<U>>::value
-	                           && std::is_convertible<const U&, T>::value), int> = 0>
+	         std::enable_if_t<(!is_tied_vector<std::decay_t<U>>::value), int> = 0>
 	constexpr vector(const U& val)
-		: vector(from_tuple(make_filled_tuple<N>(val)))
-	{
-	}
-
-	template <typename U,
-	         std::enable_if_t<(!is_tied_vector<std::decay_t<U>>::value
-	                           && !std::is_convertible<const U&, T>::value), int> = 0,
-	         typename = void> // dummy
-	constexpr explicit vector(const U& val)
 		: vector(from_tuple(make_filled_tuple<N>(val)))
 	{
 	}
 
 	// vector converters
 	template <typename V,
-		std::enable_if_t<(is_tied_vector<std::decay_t<V>>::value
-		                  && std::is_convertible<typename std::decay_t<V>::value_type, T>::value), int> = 0>
+		std::enable_if_t<(is_tied_vector<std::decay_t<V>>::value), int> = 0>
 	constexpr vector(const V& vec)
-		: vector(from_tuple(vec.tie()))
-	{
-	}
-
-	template <typename V,
-		std::enable_if_t<(is_tied_vector<std::decay_t<V>>::value
-		                  && !std::is_convertible<typename std::decay_t<V>::value_type, T>::value), int> = 0,
-		typename = void> // dummy
-	constexpr explicit vector(const V& vec)
 		: vector(from_tuple(vec.tie()))
 	{
 	}
 
 	// dimension constructors
 	template <typename... Ts,
-		typename = std::enable_if_t<(sizeof...(Ts) == N && N > 1
-		                             && conjunction<std::is_convertible<Ts, T>::value...>::value)>>
+		typename = std::enable_if_t<(sizeof...(Ts) == N && N > 1)>>
 	constexpr vector(Ts&&... vals)
-		: tied_vector()
-		, base_type{{{{static_cast<T>(std::forward<Ts>(vals))...}}}}
-	{
-	}
-
-	template <typename... Ts,
-		typename = std::enable_if_t<(sizeof...(Ts) == N && N > 1
-		                             && !conjunction<std::is_convertible<Ts, T>::value...>::value)>,
-		typename = void> // dummy
-	constexpr explicit vector(Ts&&... vals)
 		: tied_vector()
 		, base_type{{{{static_cast<T>(std::forward<Ts>(vals))...}}}}
 	{
