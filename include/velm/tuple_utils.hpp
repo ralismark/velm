@@ -122,7 +122,7 @@ template <typename T, std::size_t>
 using idx_dependent = T;
 
 template <typename T, std::size_t... Is>
-constexpr auto make_filled_tuple(T& val, std::index_sequence<Is...> /* seq */)
+constexpr auto make_filled_tuple(T&& val, std::index_sequence<Is...> /* seq */)
 {
 	return std::tuple<idx_dependent<T, Is>...>(((void)Is, std::forward<T>(val))...);
 }

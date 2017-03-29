@@ -43,7 +43,7 @@ private: // internal methods
 
 	constexpr const base_type& as_base() const
 	{
-		return static_cast<base_type&>(*this);
+		return static_cast<const base_type&>(*this);
 	}
 
 	template <std::size_t... Is>

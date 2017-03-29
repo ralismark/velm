@@ -156,7 +156,7 @@ constexpr decltype(auto) binary_apply(T1&& lhs, T2&& rhs, F&& f)
 }
 
 template <typename T1, typename T2>
-using is_appliable = std::integral_constant<bool, velm::is_tied_vector<T1>::value || velm::is_tied_vetor<T2>::value>;
+using is_appliable = std::integral_constant<bool, velm::is_tied_vector<T1>::value || velm::is_tied_vector<T2>::value>;
 
 template <typename T1, typename T2>
 using if_appliable = std::enable_if_t<is_appliable<T1, T2>::value, int>;

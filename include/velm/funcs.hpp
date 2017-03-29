@@ -45,20 +45,21 @@ namespace velm {
 	 * This checks that all components of the vector are false.
 	 */
 	template <typename T, std::enable_if_t<is_tied_vector<T>::value, int> = 0>
-	constexpr bool any(T&& vec)
+	constexpr bool none(T&& vec)
 	{
 		return !any(std::forward<T>(vec));
 	}
 
 	/**
-	 * \fn not
+	 * \fn negate
 	 * \brief returns the component-wise inverse
 	 *
 	 * This negates (using logical not) each component of the vector, and
-	 * returns the result.
+	 * returns the result. This is equivalent to the glsl function not, but
+	 * 'not' is a reserved keyword in c++.
 	 */
 	template <typename T, std::enable_if_t<is_tied_vector<T>::value, int> = 0>
-	constexpr bool any(T&& vec)
+	constexpr bool negate(T&& vec)
 	{
 		return vec_apply(vec.tie(),
 			[] (auto&& x) { return !x; });
@@ -207,10 +208,10 @@ namespace velm {
 	template <typename L, typename R, if_appliable<L, R> = 0>
 	constexpr auto dot(L&& lhs, R&& rhs)
 	{
-		using out_type = std::common_type_t<std::decay_t<L>::value_type, std::decay_t<L>::value_type>;
+		using out_type = std::common_type_t<typename std::decay_t<L>::value_type, typename std::decay_t<L>::value_type>;
 		out_type sum = 0;
 		binary_apply(std::forward<L>(lhs), std::forward<R>(rhs),
-			[] (auto&& a, auto&& b) { out_type += a * b; return 0; });
+			[&] (auto&& a, auto&& b) { sum += a * b; return 0; });
 		return sum;
 	}
 
@@ -269,7 +270,7 @@ namespace velm {
 	template <typename N, typename I, typename R>
 	constexpr auto faceforward(N&& n, I&& i, R&& nref)
 	{
-		return dot(nRef, i) < 0 ? n : -n;
+		return dot(nref, i) < 0 ? n : -n;
 	}
 
 	/**
@@ -326,6 +327,12 @@ namespace velm {
 	 *
 	 * TODO
 	 */
+	template <typename L, typename R, std::enable_if_t<!is_appliable<L, R>::value, int> = 0>
+	constexpr auto min(L&& lhs, R&& rhs)
+	{
+		return lhs < rhs ? lhs : rhs;
+	}
+
 	template <typename L, typename R, if_appliable<L, R> = 0>
 	constexpr auto min(L&& lhs, R&& rhs)
 	{
@@ -333,12 +340,10 @@ namespace velm {
 			[] (auto&& a, auto&& b) { return min(a, b); });
 	}
 
-	// if not appliable
-	// for non-vector types
 	template <typename L, typename R, std::enable_if_t<!is_appliable<L, R>::value, int> = 0>
-	constexpr auto min(L&& lhs, R&& rhs)
+	constexpr auto max(L&& lhs, R&& rhs)
 	{
-		return lhs < rhs ? lhs : rhs;
+		return lhs > rhs ? lhs : rhs;
 	}
 
 	template <typename L, typename R, velm::if_appliable<L, R> = 0>
@@ -348,18 +353,10 @@ namespace velm {
 			[] (auto&& a, auto&& b) { return max(a, b); });
 	}
 
-	// if not appliable
-	// for non-vector types
-	template <typename L, typename R, std::enable_if_t<!is_appliable<L, R>::value, int> = 0>
-	constexpr auto max(L&& lhs, R&& rhs)
-	{
-		return lhs > rhs ? lhs : rhs;
-	}
-
 	template <typename T, typename L, typename H>
 	constexpr auto clamp(T&& val, L&& low, H&& high)
 	{
-		return min(max(a, low), high);
+		return min(max(val, low), high);
 	}
 
 	template <typename A, typename B, typename WB>
