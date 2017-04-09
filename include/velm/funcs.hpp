@@ -1,8 +1,8 @@
 #pragma once
 
-#include "utility.hpp"
-
 #include <cmath>
+
+#include "utility.hpp"
 
 /**
  * \file funcs.hpp

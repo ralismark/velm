@@ -63,7 +63,7 @@ constexpr auto tuple_visit(T&& tup, F&& f)
  *      // example
  *      int a, b; double c, d;
  *      transpose_union(std::tie(a, b), std::tie(c, d))
- *      // returns std::tuple<std::tuple<int&, double&>, std::tuple<int&, double>>({a, c}, {b, c})
+ *      // returns std::tuple<std::tuple<int&, double&>, std::tuple<int&, double&>>({a, c}, {b, c})
  *
  * The type of each value is based on std::tuple_element, and must be
  * convertible from using std::get. For example, the result of
