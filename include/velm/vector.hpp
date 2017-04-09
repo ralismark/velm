@@ -4,6 +4,7 @@
 #include "base.hpp"
 #include "utility.hpp"
 #include "proxy.hpp"
+#include "convert.hpp"
 
 namespace velm {
 
@@ -94,6 +95,12 @@ public: // methods
 	{
 	}
 
+	template <typename U,
+		std::enable_if_t<is_vector_convertible_to<U, decltype(utility::make_filled_tuple<N>(std::declval<T>()))>::value, int> = 0>
+	operator U() const
+	{
+		return apply(convert_to<U>, this->tie());
+	}
 
 	template <unsigned int... Is>
 	swizzle_proxy<T, Is...>& swizzle() &
