@@ -7,6 +7,24 @@
 namespace velm {
 
 /**
+ * \fn apply
+ * \brief call given function with tuple elements as arguments
+ *
+ * This calls a provided function with the elements of a tuple as the arguments.
+ */
+template <class F, class Tuple, std::size_t... Is>
+constexpr decltype(auto) apply(F&& f, Tuple&& t, std::index_sequence<Is...> /* seq */)
+{
+	return f(std::get<Is>(std::forward<Tuple>(t))...);
+}
+template <class F, class Tuple>
+constexpr decltype(auto) apply(F&& f, Tuple&& t)
+{
+	return apply(std::forward<F>(f), std::forward<Tuple>(t), std::make_index_sequence<std::tuple_size<std::decay_t<Tuple>>::value>());
+}
+
+
+/**
  * \fn tuple_visit
  * \brief Call function on each tuple elements
  *
@@ -23,17 +41,15 @@ namespace velm {
  * ignore the return if it is not needed.
  */
 
-template <typename F, typename T, std::size_t... Is>
-constexpr auto tuple_visit(T&& tup, F&& f, std::index_sequence<Is...> /* seq */)
-{
-	return std::make_tuple(f(std::get<Is>(tup))...);
-}
-
 template <typename F, typename T>
 constexpr auto tuple_visit(T&& tup, F&& f)
 {
-	return tuple_visit(std::forward<T>(tup), std::forward<F>(f),
-		std::make_index_sequence<std::tuple_size<std::decay_t<T>>::value>());
+	auto fn = [&] (auto&&... args) {
+		return std::make_tuple(f(std::forward<decltype(args)>(args))...);
+	};
+	// explicit namespacing required since <tuple> has std::apply
+	// Note: both are identical in functionality
+	return utility::apply(fn, std::forward<T>(tup));
 }
 
 

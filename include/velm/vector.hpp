@@ -12,14 +12,6 @@ struct vector
 	: private tied_vector
 	, public vec_base<T, N, swizzle_proxy>
 {
-private: // internal statics
-
-	template <typename Tup, std::size_t... Is>
-	constexpr static vector<T, N> from_tuple_impl(Tup&& t, std::index_sequence<Is...> /* seq */)
-	{
-		return vector<T, N>(std::get<Is>(t)...);
-	}
-
 public: // statics
 
 	static constexpr auto dimensions = N;
@@ -29,7 +21,12 @@ public: // statics
 	constexpr static vector<T, N> from_tuple(Tup&& t)
 	{
 		using tup_size = std::tuple_size<std::decay_t<Tup>>;
-		return from_tuple_impl(std::forward<Tup>(t), std::make_index_sequence<tup_size::value>());
+		static_assert(tup_size::value == N, "Tuple must have an element for each dimension");
+
+		auto constructor = [] (auto&&... args) {
+			return vector<T, N>(std::forward<decltype(args)>(args)...);
+		};
+		return utility::apply(constructor, std::forward<Tup>(t));
 	}
 
 private: // internal methods
