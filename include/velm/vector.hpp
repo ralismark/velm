@@ -72,15 +72,15 @@ public: // methods
 
 	// value constructors
 	template <typename U,
-	         std::enable_if_t<(!is_tied_vector<std::decay_t<U>>::value), int> = 0>
+	         std::enable_if_t<(!utility::is_tied_vector<std::decay_t<U>>::value), int> = 0>
 	constexpr vector(const U& val)
-		: vector(from_tuple(make_filled_tuple<N>(val)))
+		: vector(from_tuple(utility::make_filled_tuple<N>(val)))
 	{
 	}
 
 	// vector converters
 	template <typename V,
-		std::enable_if_t<(is_tied_vector<std::decay_t<V>>::value), int> = 0>
+		std::enable_if_t<(utility::is_tied_vector<std::decay_t<V>>::value), int> = 0>
 	constexpr vector(const V& vec)
 		: vector(from_tuple(vec.tie()))
 	{
@@ -99,27 +99,27 @@ public: // methods
 		std::enable_if_t<is_vector_convertible_to<U, decltype(utility::make_filled_tuple<N>(std::declval<T>()))>::value, int> = 0>
 	operator U() const
 	{
-		return apply(convert_to<U>, this->tie());
+		return utility::apply(convert_to<U>, this->tie());
 	}
 
 	template <unsigned int... Is>
 	swizzle_proxy<T, Is...>& swizzle() &
 	{
-		static_assert(tmax<unsigned int, Is...>::value < N, "Indices must be valid");
+		static_assert(utility::tmax<unsigned int, Is...>::value < N, "Indices must be valid");
 		return *reinterpret_cast<swizzle_proxy<T, Is...>*>(&this->as_base().data);
 	}
 
 	template <unsigned int... Is>
 	const swizzle_proxy<T, Is...>& swizzle() const&
 	{
-		static_assert(tmax<unsigned int, Is...>::value < N, "Indices must be valid");
+		static_assert(utility::tmax<unsigned int, Is...>::value < N, "Indices must be valid");
 		return *reinterpret_cast<const swizzle_proxy<T, Is...>*>(&this->as_base().data);
 	}
 
 	template <unsigned int... Is>
 	vector<T, sizeof...(Is)> swizzle() const&&
 	{
-		static_assert(tmax<unsigned int, Is...>::value < N, "Indices must be valid");
+		static_assert(utility::tmax<unsigned int, Is...>::value < N, "Indices must be valid");
 		return vector<T, sizeof...(Is)>(std::get<Is>(this->as_base().data)...);
 	}
 

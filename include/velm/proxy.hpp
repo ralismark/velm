@@ -19,7 +19,7 @@ public: // statics
 
 private:
 
-	std::array<T, tmax<unsigned int, N...>::value + 1> underlying; // used to acess swizzles
+	std::array<T, utility::tmax<unsigned int, N...>::value + 1> underlying; // used to acess swizzles
 
 public:
 
@@ -39,7 +39,7 @@ public:
 	}
 
 	template <typename U,
-		std::enable_if_t<is_tied_vector<U>::value, int> = 0>
+		std::enable_if_t<utility::is_tied_vector<U>::value, int> = 0>
 	constexpr swizzle_proxy& operator=(U&& vec)
 	{
 		static_assert(std::tuple_size<decltype(this->tie())>::value == std::tuple_size<decltype(vec.tie())>::value,
@@ -49,10 +49,10 @@ public:
 	}
 
 	template <typename U,
-		std::enable_if_t<!is_tied_vector<U>::value, int> = 0>
+		std::enable_if_t<!utility::is_tied_vector<U>::value, int> = 0>
 	constexpr swizzle_proxy& operator=(U&& val)
 	{
-		this->tie() = make_filled_tuple<dimensions>(val);
+		this->tie() = utility::make_filled_tuple<dimensions>(val);
 		return *this;
 	}
 

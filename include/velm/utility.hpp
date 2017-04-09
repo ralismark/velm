@@ -9,6 +9,26 @@
 namespace velm {
 
 /**
+ * \struct tied_vector
+ * \brief tag for vector-likes
+ *
+ * Inherit from this class to denote a vector-like type. That type must have
+ * the member function tie(), as well as the type value_type.
+ */
+struct tied_vector
+{
+	// using T = drived type
+
+	// requires(T a) {
+	//      a.tie() -> std::tuple<T::value_type...>
+	// }
+}; // tag
+
+} // namespace velm
+
+namespace velm { namespace utility {
+
+/**
  * \struct tmax
  * \brief variadic maximal value
  *
@@ -26,22 +46,6 @@ struct tmax<T, l, r, vals...>
 	: std::integral_constant<T, tmax<T, (l > r ? l : r), vals...>::value>
 {
 };
-
-/**
- * \struct tied_vector
- * \brief tag for vector-likes
- *
- * Inherit from this class to denote a vector-like type. That type must have
- * the member function tie(), as well as the type value_type.
- */
-struct tied_vector
-{
-	// using T = drived type
-
-	// requires(T a) {
-	//      a.tie() -> std::tuple<T::value_type...>
-	// }
-}; // tag
 
 /**
  * \struct is_tied_vector
@@ -108,7 +112,7 @@ template <typename T1, typename T2, typename F, std::enable_if_t<
 	, int> = 0>
 constexpr decltype(auto) binary_tuple_apply(T1&& val1, T2&& vec2, F&& f)
 {
-	using traits = velm::tuple_traits<decltype(vec2.tie())>;
+	using traits = tuple_traits<decltype(vec2.tie())>;
 	return f(make_filled_tuple<traits::size>(val1), vec2.tie());
 }
 
@@ -117,7 +121,7 @@ template <typename T1, typename T2, typename F, std::enable_if_t<
 	, int> = 0>
 constexpr decltype(auto) binary_tuple_apply(T1&& vec1, T2&& val2, F&& f)
 {
-	using traits = velm::tuple_traits<decltype(vec1.tie())>;
+	using traits = tuple_traits<decltype(vec1.tie())>;
 	return f(vec1.tie(), make_filled_tuple<traits::size>(val2));
 }
 
@@ -143,12 +147,12 @@ constexpr decltype(auto) binary_apply(T1&& lhs, T2&& rhs, F&& f)
 }
 
 template <typename T1, typename T2>
-using is_appliable = std::integral_constant<bool, velm::is_tied_vector<T1>::value || velm::is_tied_vector<T2>::value>;
+using is_appliable = std::integral_constant<bool, is_tied_vector<T1>::value || is_tied_vector<T2>::value>;
 
 template <typename T1, typename T2>
 using if_appliable = std::enable_if_t<is_appliable<T1, T2>::value, int>;
 
 template <typename T1, typename T2>
-using if_compound_appliable = std::enable_if_t<velm::is_tied_vector<T1>::value, int>;
+using if_compound_appliable = std::enable_if_t<is_tied_vector<T1>::value, int>;
 
-}
+} } // namespace velm::utility

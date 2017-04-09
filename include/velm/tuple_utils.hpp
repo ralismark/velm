@@ -4,7 +4,7 @@
 #include <tuple>
 #include <utility>
 
-namespace velm {
+namespace velm { namespace utility {
 
 /**
  * \fn apply
@@ -148,4 +148,4 @@ constexpr auto make_filled_tuple(T&& val)
 }
 
 
-}
+} } // namespace velm::utility
