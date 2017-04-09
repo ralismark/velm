@@ -2,7 +2,17 @@
 
 #include "utility.hpp"
 
-// unary plus {{{
+/**
+ * \file ops.hpp
+ * \brief operator overloads for vectors
+ *
+ * Several operator overloads are provided for vectors. These are generally
+ * component-wise, and can be used for vectors and vectors, or vectors and
+ * scalars. Most arithmetic operations are provided, as well as their compound
+ * assignment counterparts. Comparison is done lexicographically.
+ */
+
+// unary {{{
 
 template <typename T,
 	std::enable_if_t<velm::is_tied_vector<T>::value, int> = 0>
@@ -10,9 +20,6 @@ constexpr auto operator+(T&& vec)
 {
 	return velm::vec_apply(vec.tie(), [] (auto&& x) { return +x; });
 }
-
-// }}}
-// unary negate {{{
 
 template <typename T,
 	std::enable_if_t<velm::is_tied_vector<T>::value, int> = 0>

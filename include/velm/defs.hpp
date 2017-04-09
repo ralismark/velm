@@ -2,6 +2,15 @@
 
 #include <type_traits>
 
+/*
+ * \file defs.hpp
+ * \brief class declarations
+ *
+ * This file declares several major classes which are used throughout the
+ * library, allowing them to be used together. Additionally, the
+ * std::common_type specialisations are provided.
+ */
+
 namespace velm {
 
 template <typename T, unsigned int... N>

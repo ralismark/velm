@@ -2,6 +2,20 @@
 
 #include <array>
 
+/**
+ * \file
+ * \brief base container definitions
+ *
+ * This file defines the struct vec_base, which is used to create the swizzle
+ * members. Additionally, this simplifies the actual vector class definition,
+ * which would require overloads for each size otherwise (as well as
+ * reimplementing the member function).
+ *
+ * vec_base requires several language extensions (e.g. anonymous structs in
+ * unions). While supported by major compilers, they still issue a warning.
+ * These are suppressed with pragmas.
+ */
+
 #if defined(__llvm__)
 	#pragma clang diagnostic push
 	#pragma clang diagnostic ignored "-Wgnu-anonymous-struct"

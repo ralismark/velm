@@ -4,6 +4,20 @@
 
 #include <cmath>
 
+/**
+ * \file funcs.hpp
+ * \brief named vector/scalar functions
+ *
+ * Several functions are defined in this file to provide extra functionality.
+ * Most of these are equivalent to the GLSL function of the same name, but have
+ * better type support (inc. user-defined vectors). At this point, this is
+ * incomplete (both in terms of functions and documentation), though many parts
+ * are completed.
+ *
+ * One difference is the negate function, which is equivalent to the GLSL not
+ * function. This was named differently as 'not' is a reserved keyword in C++.
+ */
+
 namespace velm {
 
 	// logical {{{

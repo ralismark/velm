@@ -6,7 +6,7 @@
 
 namespace velm {
 
-/*
+/**
  * \fn tuple_visit
  * \brief Call function on each tuple elements
  *
@@ -75,7 +75,6 @@ constexpr auto transpose_union(Ts&&... ts)
 	return transpose_union(std::make_index_sequence<first_size::value>(), std::forward<Ts>(ts)...);
 }
 
-
 /*
  * \fn tuple_subtype_apply
  * \brief Use tuple's sub-types as template parameters
@@ -89,7 +88,6 @@ constexpr auto transpose_union(Ts&&... ts)
  *      // common == double
  *
  */
-
 
 template <typename T, template <typename...> typename F, typename = void>
 struct tuple_subtype_apply
