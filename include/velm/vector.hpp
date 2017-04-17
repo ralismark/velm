@@ -99,7 +99,7 @@ public: // methods
 		std::enable_if_t<is_vector_convertible_to<U, decltype(utility::make_filled_tuple<N>(std::declval<T>()))>::value, int> = 0>
 	operator U() const
 	{
-		return utility::apply(convert_to<U>, this->tie());
+		return utility::apply(converter_to<U>{}, this->tie());
 	}
 
 	template <unsigned int... Is>
