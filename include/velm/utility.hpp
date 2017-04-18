@@ -48,6 +48,29 @@ struct tmax<T, l, r, vals...>
 };
 
 /**
+ * \typedef is_callable_r
+ * \brief check if a function is callable and return is convertible
+ *
+ * Similar to std::is_callable_r/std::is_invocable_r, this checks if a given
+ * function (Fn) is callable with a given set of arguments, and that the return
+ * type is convertible to another given type.
+ */
+
+template <typename R, typename F, typename... Ts,
+	typename = std::enable_if_t<std::is_convertible<
+		decltype(std::declval<F>()(std::declval<Ts>()...)), R
+	>::value>>
+std::true_type is_callable_r_t(R&&, F&&, Ts&&...);
+std::false_type is_callable_r_t(...);
+
+template <typename R, typename Fn, typename... Args>
+using is_callable_r = decltype(is_callable_r_t(
+		std::declval<R>(),
+		std::declval<Fn>(),
+		std::declval<Args>()...
+	));
+
+/**
  * \struct is_tied_vector
  * \brief checks if a type is a vector-like
  *
