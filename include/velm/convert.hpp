@@ -3,6 +3,7 @@
 #include <utility>
 
 #include "defs.hpp"
+#include "tuple_utils.hpp"
 
 namespace velm {
 
@@ -33,19 +34,9 @@ namespace velm {
 		}
 	};
 
-	template <typename R, typename F, typename Tup,
-		typename = std::enable_if_t<std::is_convertible<
-			decltype(utility::apply(std::declval<F>(), std::declval<Tup>())), R
-		>::value>>
-	std::true_type is_tuple_callable_r_test(R, F, Tup);
-	std::false_type is_tuple_callable_r_test(...);
-
 	template <typename T, typename Tup>
-	using is_vector_convertible_to =
-		decltype(is_tuple_callable_r_test(
-			std::declval<T>(),
-			std::declval<converter_to<T>>(),
-			std::declval<Tup>()
-		));
+	using is_vector_convertible_to = typename utility::tuple_subtype_apply<Tup,
+			utility::prepend<utility::is_callable_r, T, converter_to<T>>::template apply
+		>::type;
 
 } // namespace velm
