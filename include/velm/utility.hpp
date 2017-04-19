@@ -71,6 +71,36 @@ using is_callable_r = decltype(is_callable_r_t(
 	));
 
 /**
+ * \struct prepend
+ * \brief prepend arguments to template parameter list
+ *
+ * This adds any number of types to the front of the argument list. Use the
+ * template member apply as the result.
+ *
+ * Note: remember to use the template keyword in front of fn, since it may be a
+ * dependent member
+ */
+template <template <typename...> typename Fn, typename... Pre>
+struct prepend
+{
+	template <typename... Ts>
+	using apply = Fn<Pre..., Ts...>;
+};
+
+/**
+ * \struct append
+ * \brief add arguments to the end of a template parameter list
+ *
+ * Similar to prepend, but to the back.
+ */
+template <template <typename...> typename Fn, typename... App>
+struct append
+{
+	template <typename... Ts>
+	using apply = Fn<Ts..., App...>;
+};
+
+/**
  * \struct is_tied_vector
  * \brief checks if a type is a vector-like
  *
