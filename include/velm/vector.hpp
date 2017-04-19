@@ -82,7 +82,7 @@ public: // methods
 	template <typename V,
 		std::enable_if_t<(utility::is_tied_vector<std::decay_t<V>>::value), int> = 0>
 	constexpr vector(const V& vec)
-		: vector(from_tuple(velm::adl_tie(vec)))
+		: vector(from_tuple(usr::tie(vec)))
 	{
 	}
 
@@ -99,7 +99,7 @@ public: // methods
 		std::enable_if_t<is_vector_convertible_to<U, decltype(utility::make_filled_tuple<N>(std::declval<T>()))>::value, int> = 0>
 	operator U() const
 	{
-		return utility::apply(converter_to<U>{}, this->tie());
+		return utility::apply(usr::converter_to<U>{}, this->tie());
 	}
 
 	template <unsigned int... Is>

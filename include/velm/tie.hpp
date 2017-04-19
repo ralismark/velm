@@ -3,14 +3,14 @@
 #include <type_traits>
 #include <utility>
 
-namespace velm {
+namespace velm { namespace usr {
 
 	/**
 	 * \fn tie
 	 * \brief get tie of type
 	 *
-	 * This is to allow ADL for ties, e.g. for external types. Overload as
-	 * needed.
+	 * This is a customisation point to allow external types (ones that you
+	 * cannot modify e.g. in other libraries) to be used.
 	 */
 	template <typename T>
 	constexpr decltype(auto) tie(T&& t)
@@ -26,17 +26,4 @@ namespace velm {
 		return tup;
 	}
 
-	/**
-	 * \fn adl_tie
-	 * \brief ADL helper for tie
-	 *
-	 * This helps by making it easier to use tie() properly.
-	 */
-	template <typename T>
-	constexpr decltype(auto) adl_tie(T&& t)
-	{
-		using namespace velm;
-		return tie(std::forward<T>(t));
-	}
-
-} // namespace velm
+} } // namespace velm::usr

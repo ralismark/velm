@@ -5,7 +5,7 @@
 #include "defs.hpp"
 #include "tuple_utils.hpp"
 
-namespace velm {
+namespace velm { namespace usr {
 
 	/**
 	 * \struct converter_to
@@ -23,9 +23,13 @@ namespace velm {
 		T operator()(Args&&...) const = delete;
 	};
 
+} } // namespace velm::usr
+
+namespace velm {
+
 	template <typename T, typename Tup>
 	using is_vector_convertible_to = typename utility::tuple_subtype_apply<Tup,
-			utility::prepend<utility::is_callable_r, T, converter_to<T>>::template apply
+			utility::prepend<utility::is_callable_r, T, usr::converter_to<T>>::template apply
 		>::type;
 
 } // namespace velm

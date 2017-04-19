@@ -32,7 +32,7 @@ namespace velm { inline namespace funcs {
 	constexpr bool all(T&& vec)
 	{
 		bool result = true;
-		utility::vec_apply(velm::adl_tie(vec),
+		utility::vec_apply(usr::tie(vec),
 			[&] (auto&& x) { return result &= bool(x); });
 		return result;
 	}
@@ -47,7 +47,7 @@ namespace velm { inline namespace funcs {
 	constexpr bool any(T&& vec)
 	{
 		bool result = false;
-		utility::vec_apply(velm::adl_tie(vec),
+		utility::vec_apply(usr::tie(vec),
 			[&] (auto&& x) { return result |= bool(x); });
 		return result;
 	}
@@ -75,7 +75,7 @@ namespace velm { inline namespace funcs {
 	template <typename T, std::enable_if_t<utility::is_tied_vector<T>::value, int> = 0>
 	constexpr bool negate(T&& vec)
 	{
-		return utility::vec_apply(velm::adl_tie(vec),
+		return utility::vec_apply(usr::tie(vec),
 			[] (auto&& x) { return !x; });
 	}
 
@@ -330,7 +330,7 @@ namespace velm { inline namespace funcs {
 	template <typename T, std::enable_if_t<utility::is_tied_vector<T>::value, int> = 0>
 	constexpr auto abs(T&& vec)
 	{
-		return utility::vec_apply(velm::adl_tie(vec),
+		return utility::vec_apply(usr::tie(vec),
 			[] (auto&& x) { return abs(x); });
 	}
 
