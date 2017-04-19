@@ -5,6 +5,7 @@
 
 #include "defs.hpp"
 #include "tuple_utils.hpp"
+#include "tie.hpp"
 
 namespace velm {
 
@@ -20,7 +21,7 @@ struct tied_vector
 	// using T = drived type
 
 	// requires(T a) {
-	//      a.tie() -> std::tuple<T::value_type...>
+	//      velm::adl_tie(a) -> std::tuple<T::value_type...>
 	// }
 }; // tag
 
@@ -157,7 +158,7 @@ template <typename T1, typename T2, typename F, std::enable_if_t<
 	, int> = 0>
 constexpr decltype(auto) binary_tuple_apply(T1&& vec1, T2&& vec2, F&& f)
 {
-	return f(vec1.tie(), vec2.tie());
+	return f(velm::adl_tie(vec1), velm::adl_tie(vec2));
 }
 
 template <typename T1, typename T2, typename F, std::enable_if_t<
@@ -165,8 +166,8 @@ template <typename T1, typename T2, typename F, std::enable_if_t<
 	, int> = 0>
 constexpr decltype(auto) binary_tuple_apply(T1&& val1, T2&& vec2, F&& f)
 {
-	using traits = tuple_traits<decltype(vec2.tie())>;
-	return f(make_filled_tuple<traits::size>(val1), vec2.tie());
+	using traits = tuple_traits<decltype(velm::adl_tie(vec2))>;
+	return f(make_filled_tuple<traits::size>(val1), velm::adl_tie(vec2));
 }
 
 template <typename T1, typename T2, typename F, std::enable_if_t<
@@ -174,8 +175,8 @@ template <typename T1, typename T2, typename F, std::enable_if_t<
 	, int> = 0>
 constexpr decltype(auto) binary_tuple_apply(T1&& vec1, T2&& val2, F&& f)
 {
-	using traits = tuple_traits<decltype(vec1.tie())>;
-	return f(vec1.tie(), make_filled_tuple<traits::size>(val2));
+	using traits = tuple_traits<decltype(velm::adl_tie(vec1))>;
+	return f(velm::adl_tie(vec1), make_filled_tuple<traits::size>(val2));
 }
 
 template <typename T1, typename T2, typename F, std::enable_if_t<

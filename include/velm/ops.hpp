@@ -18,14 +18,14 @@ template <typename T,
 	std::enable_if_t<velm::utility::is_tied_vector<T>::value, int> = 0>
 constexpr auto operator+(T&& vec)
 {
-	return velm::utility::vec_apply(vec.tie(), [] (auto&& x) { return +x; });
+	return velm::utility::vec_apply(velm::adl_tie(vec), [] (auto&& x) { return +x; });
 }
 
 template <typename T,
 	std::enable_if_t<velm::utility::is_tied_vector<T>::value, int> = 0>
 constexpr auto operator-(T&& vec)
 {
-	return velm::utility::vec_apply(vec.tie(), [] (auto&& x) { return -x; });
+	return velm::utility::vec_apply(velm::adl_tie(vec), [] (auto&& x) { return -x; });
 }
 
 // }}}

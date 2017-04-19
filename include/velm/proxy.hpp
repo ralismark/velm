@@ -42,9 +42,9 @@ public:
 		std::enable_if_t<utility::is_tied_vector<U>::value, int> = 0>
 	constexpr swizzle_proxy& operator=(U&& vec)
 	{
-		static_assert(std::tuple_size<decltype(this->tie())>::value == std::tuple_size<decltype(vec.tie())>::value,
+		static_assert(std::tuple_size<decltype(this->tie())>::value == std::tuple_size<decltype(velm::adl_tie(vec))>::value,
 		              "Ties must be the same size");
-		this->tie() = vec.tie();
+		this->tie() = velm::adl_tie(vec);
 		return *this;
 	}
 
