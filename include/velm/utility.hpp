@@ -7,26 +7,6 @@
 #include "tuple_utils.hpp"
 #include "tie.hpp"
 
-namespace velm {
-
-/**
- * \struct tied_vector
- * \brief tag for vector-likes
- *
- * Inherit from this class to denote a vector-like type. That type must have
- * the member function tie(), as well as the type value_type.
- */
-struct tied_vector
-{
-	// using T = drived type
-
-	// requires(T a) {
-	//      usr::tie(a) -> std::tuple<T::value_type...>
-	// }
-}; // tag
-
-} // namespace velm
-
 namespace velm { namespace utility {
 
 /**
@@ -105,10 +85,19 @@ struct append
  * \struct is_tied_vector
  * \brief checks if a type is a vector-like
  *
- * This checks if a type inherits from the tied_vector tag.
+ * This checks if a type fulfils the tied_vector concept. That is,
+ * velm::usr::tie(a) returns a tuple-like (i.e. tuple, pair, array).
  */
+
+template <typename T,
+	typename = std::enable_if_t<(std::tuple_size<
+			decltype(usr::tie(std::declval<T>()))
+		>::value >= 0)>>
+std::true_type is_tied_vector_t(T&&);
+std::false_type is_tied_vector_t(...);
+
 template <typename T>
-using is_tied_vector = std::is_base_of<tied_vector, std::decay_t<T>>;
+using is_tied_vector = decltype(is_tied_vector_t(std::declval<T>()));
 
 /**
  * \fn vec_apply

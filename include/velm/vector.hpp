@@ -10,8 +10,7 @@ namespace velm {
 
 template <typename T, unsigned int N>
 struct vector
-	: private tied_vector
-	, public vec_base<T, N, swizzle_proxy>
+	: public vec_base<T, N, swizzle_proxy>
 {
 public: // statics
 
@@ -65,8 +64,7 @@ private: // internal methods
 public: // methods
 
 	constexpr vector()
-		: tied_vector()
-		, base_type()
+		: base_type()
 	{
 	}
 
@@ -90,8 +88,7 @@ public: // methods
 	template <typename... Ts,
 		typename = std::enable_if_t<(sizeof...(Ts) == N && N > 1)>>
 	constexpr vector(Ts&&... vals)
-		: tied_vector()
-		, base_type{{{{static_cast<T>(std::forward<Ts>(vals))...}}}}
+		: base_type{{{{static_cast<T>(std::forward<Ts>(vals))...}}}}
 	{
 	}
 

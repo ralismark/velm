@@ -10,7 +10,6 @@ namespace velm {
 
 template <typename T, unsigned int... N>
 struct swizzle_proxy
-	: private tied_vector
 {
 public: // statics
 
