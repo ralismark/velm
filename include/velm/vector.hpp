@@ -80,7 +80,7 @@ public: // methods
 	template <typename V,
 		std::enable_if_t<(utility::is_tied_vector<std::decay_t<V>>::value), int> = 0>
 	constexpr vector(const V& vec)
-		: vector(from_tuple(usr::tie(vec)))
+		: vector(from_tuple(get_tie(vec)))
 	{
 	}
 

@@ -6,24 +6,57 @@
 namespace velm { namespace usr {
 
 	/**
-	 * \fn tie
-	 * \brief get tie of type
+	 * \struct tie
+	 * \brief function objet to create a tie from a type
 	 *
-	 * This is a customisation point to allow external types (ones that you
-	 * cannot modify e.g. in other libraries) to be used.
+	 * Similar to usr::converter_to, this provides another customisation
+	 * point to allow user-provided type to be used in vector operations.
+	 *
+	 * This should be specialised to take a single argument, which is the
+	 * same as (or convertible from) the template type, and return a
+	 * tuple-like (i.e. pair, tuple, array).
+	 *
+	 * Additionally, this detects the member function tie() and is able to
+	 * use that without additional overloads.
 	 */
 	template <typename T>
-	constexpr decltype(auto) tie(T&& t)
+	struct tie
 	{
-		return t.tie();
-	}
+		// void operator()(const T&) const = delete;
+	};
+
+	// types with .tie() member function
+	template <typename T,
+		typename = decltype(std::declval<T&>().tie())>
+	struct tie<T>
+	{
+		template <typename U> // allows perfect forwarding, e.g. for rvalue overloads
+		decltype(auto) operator()(U&& t)
+		{
+			return std::forward<U>(t).tie();
+		}
+	};
 
 	// tuple types
 	template <typename T,
-		typename = std::enable_if_t<(std::tuple_size<std::decay_t<T>>::value >= 0)>>
-	constexpr decltype(auto) tie(T&& tup)
+		typename = std::enable_if_t<(std::tuple_size<T>::value >= 0)>>
+	struct tie<T>
 	{
-		return tup;
-	}
+		template <typename U>
+		decltype(auto) operator()(U&& t)
+		{
+			return std::forward<U>(t);
+		}
+	};
 
 } } // namespace velm::usr
+
+namespace velm {
+
+	template <typename T>
+	decltype(auto) get_tie(T&& t)
+	{
+		return usr::tie<std::decay_t<T>>{}(t);
+	}
+
+} // namespace velm

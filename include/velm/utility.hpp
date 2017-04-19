@@ -86,12 +86,12 @@ struct append
  * \brief checks if a type is a vector-like
  *
  * This checks if a type fulfils the tied_vector concept. That is,
- * velm::usr::tie(a) returns a tuple-like (i.e. tuple, pair, array).
+ * velm::get_tie(a) returns a tuple-like (i.e. tuple, pair, array).
  */
 
 template <typename T,
 	typename = std::enable_if_t<(std::tuple_size<
-			decltype(usr::tie(std::declval<T>()))
+			decltype(make_tie(std::declval<T>()))
 		>::value >= 0)>>
 std::true_type is_tied_vector_t(T&&);
 std::false_type is_tied_vector_t(...);
@@ -147,7 +147,7 @@ template <typename T1, typename T2, typename F, std::enable_if_t<
 	, int> = 0>
 constexpr decltype(auto) binary_tuple_apply(T1&& vec1, T2&& vec2, F&& f)
 {
-	return f(usr::tie(vec1), usr::tie(vec2));
+	return f(get_tie(vec1), get_tie(vec2));
 }
 
 template <typename T1, typename T2, typename F, std::enable_if_t<
@@ -155,8 +155,8 @@ template <typename T1, typename T2, typename F, std::enable_if_t<
 	, int> = 0>
 constexpr decltype(auto) binary_tuple_apply(T1&& val1, T2&& vec2, F&& f)
 {
-	using traits = tuple_traits<decltype(usr::tie(vec2))>;
-	return f(make_filled_tuple<traits::size>(val1), usr::tie(vec2));
+	using traits = tuple_traits<decltype(get_tie(vec2))>;
+	return f(make_filled_tuple<traits::size>(val1), get_tie(vec2));
 }
 
 template <typename T1, typename T2, typename F, std::enable_if_t<
@@ -164,8 +164,8 @@ template <typename T1, typename T2, typename F, std::enable_if_t<
 	, int> = 0>
 constexpr decltype(auto) binary_tuple_apply(T1&& vec1, T2&& val2, F&& f)
 {
-	using traits = tuple_traits<decltype(usr::tie(vec1))>;
-	return f(usr::tie(vec1), make_filled_tuple<traits::size>(val2));
+	using traits = tuple_traits<decltype(get_tie(vec1))>;
+	return f(get_tie(vec1), make_filled_tuple<traits::size>(val2));
 }
 
 template <typename T1, typename T2, typename F, std::enable_if_t<
