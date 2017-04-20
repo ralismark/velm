@@ -26,9 +26,10 @@ namespace velm { namespace usr {
 	};
 
 	// types with .tie() member function
-	template <typename T,
-		typename = decltype(std::declval<T&>().tie())>
-	struct tie<T>
+	template <typename T>
+	struct tie<T, typename std::conditional<true, void,
+			decltype(std::declval<T&>().tie())
+		>::type>
 	{
 		template <typename U> // allows perfect forwarding, e.g. for rvalue overloads
 		decltype(auto) operator()(U&& t)
@@ -38,9 +39,10 @@ namespace velm { namespace usr {
 	};
 
 	// tuple types
-	template <typename T,
-		typename = std::enable_if_t<(std::tuple_size<T>::value >= 0)>>
-	struct tie<T>
+	template <typename T>
+	struct tie<T, std::enable_if_t<(
+			std::tuple_size<T>::value >= 0
+		)>>
 	{
 		template <typename U>
 		decltype(auto) operator()(U&& t)
