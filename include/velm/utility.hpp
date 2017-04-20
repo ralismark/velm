@@ -29,6 +29,37 @@ struct tmax<T, l, r, vals...>
 };
 
 /**
+ * \typedef detect
+ * \brief detection idiom
+ *
+ * This allows the use of the detection idiom, which checks if a template
+ * instantiation is valid, and determines what the resulting type is. This can
+ * be used to roughly implement concepts, by checking the type of certain
+ * expressions.
+ *
+ * See http://en.cppreference.com/w/cpp/experimental/is_detected for details.
+ */
+template <typename...>
+using void_t = void;
+
+template <typename Void, template <typename...> typename Op, typename... Args>
+struct detector
+{
+	using value_t = std::false_type;
+	using type = void;
+};
+
+template <template <typename...> typename Op, typename... Args>
+struct detector<void_t<Op<Args...>>, Op, Args...>
+{
+	using value_t = std::true_type;
+	using type = Op<Args...>;
+};
+
+template <template <typename...> typename Op, typename... Args>
+using detect = detector<void, Op, Args...>;
+
+/**
  * \typedef is_callable_r
  * \brief check if a function is callable and return is convertible
  *
@@ -36,20 +67,11 @@ struct tmax<T, l, r, vals...>
  * function (Fn) is callable with a given set of arguments, and that the return
  * type is convertible to another given type.
  */
-
-template <typename R, typename F, typename... Ts,
-	typename = std::enable_if_t<std::is_convertible<
-		decltype(std::declval<F>()(std::declval<Ts>()...)), R
-	>::value>>
-std::true_type is_callable_r_t(R&&, F&&, Ts&&...);
-std::false_type is_callable_r_t(...);
+template <typename Fn, typename... Args>
+using call_detect = decltype(std::declval<Fn>()(std::declval<Args>()...));
 
 template <typename R, typename Fn, typename... Args>
-using is_callable_r = decltype(is_callable_r_t(
-		std::declval<R>(),
-		std::declval<Fn>(),
-		std::declval<Args>()...
-	));
+using is_callable_r = std::is_convertible<typename detect<call_detect, Fn, Args...>::type, R>;
 
 /**
  * \struct prepend
@@ -88,16 +110,11 @@ struct append
  * This checks if a type fulfils the tied_vector concept. That is,
  * velm::get_tie(a) returns a tuple-like (i.e. tuple, pair, array).
  */
-
-template <typename T,
-	typename = std::enable_if_t<(std::tuple_size<
-			decltype(make_tie(std::declval<T>()))
-		>::value >= 0)>>
-std::true_type is_tied_vector_t(T&&);
-std::false_type is_tied_vector_t(...);
+template <typename T>
+using tie_detect = decltype(usr::tie<std::decay_t<T>>{}(std::declval<T>()));
 
 template <typename T>
-using is_tied_vector = decltype(is_tied_vector_t(std::declval<T>()));
+using is_tied_vector = typename detect<tie_detect, T>::value_t;
 
 /**
  * \fn vec_apply
