@@ -16,7 +16,7 @@ namespace velm { namespace usr {
 	 * any number of parameters, and return the same type as the template
 	 * parameter.
 	 */
-	template <typename T>
+	template <typename T, typename = void>
 	struct converter_to
 	{
 		template <typename... Args>

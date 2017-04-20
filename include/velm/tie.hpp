@@ -19,7 +19,7 @@ namespace velm { namespace usr {
 	 * Additionally, this detects the member function tie() and is able to
 	 * use that without additional overloads.
 	 */
-	template <typename T>
+	template <typename T, typename = void>
 	struct tie
 	{
 		// void operator()(const T&) const = delete;
